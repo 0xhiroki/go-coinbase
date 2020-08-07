@@ -169,3 +169,38 @@ func (a *APIClient) CancelRequestMoney(id, transId string) (err error) {
 	}
 	return
 }
+
+type SendMaxRequest struct {
+	From FromAccount `json:"fromAccount"`
+	To   string      `json:"to"`
+}
+
+type FromAccount struct {
+	ID string `json:"id"`
+}
+
+type SendMaxResult struct {
+	ID     string        `json:"id"`
+	Amount SendMaxAmount `json:"amount"`
+}
+
+type SendMaxAmount struct {
+	Value    string `json"value"`
+	Currency string `json:"currency"`
+}
+
+func (a *APIClient) GetSendMax(fromAccountID string, toAddress string) (err error) {
+	path := "/v3/coinbase.public_api.authed.sends.Sends/CreateSendMax"
+	var result SendMaxResult
+	request := SendMaxRequest{
+		From: FromAccount{
+			ID: fromAccountID,
+		},
+		To: toAddress,
+	}
+	err = a.Fetch("POST", path, request, &result)
+	if err != nil {
+		return
+	}
+	return
+}
